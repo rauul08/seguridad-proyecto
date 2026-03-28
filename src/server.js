@@ -1,5 +1,6 @@
 const express = require("express");
 const { PORT } = require("./constants/config");
+const logger = require("./utils/logger");
 
 // Importar rutas
 const authRoutes = require("./routes/auth.routes");
@@ -18,5 +19,5 @@ app.use("/cart", cartRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  logger.info(`Servidor corriendo en http://localhost:${PORT}`);
 });

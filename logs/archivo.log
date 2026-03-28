@@ -1,0 +1,14 @@
+2026-03-28 16:54:54 | INFO | Servidor corriendo en http://localhost:3000
+2026-03-28 16:54:54 | INFO | Conectado a la base de datos SQLite
+2026-03-28 16:55:11 | DEBUG | Solicitud de login recibida {"email":"aa***@gmail.com"}
+2026-03-28 16:55:11 | WARN | Login fallido por credenciales invalidas {"email":"aa***@gmail.com"}
+2026-03-28 16:55:49 | DEBUG | Solicitud de login recibida {"email":"aa***@gmail.com"}
+2026-03-28 16:55:49 | INFO | Inicio de sesión exitoso {"userId":8,"email":"aa***@gmail.com","role":"cliente"}
+2026-03-28 16:56:07 | DEBUG | Solicitud de creacion de producto recibida {"name":"Teclado Gamer Malo","price":-734.2,"stock":0}
+2026-03-28 16:56:07 | WARN | Creacion de producto rechazada por precio invalido {"name":"Teclado Gamer Malo","price":-734.2}
+
+2026-03-28 16:57:06 | DEBUG | Solicitud para agregar producto al carrito {"userId":2,"productId":1,"quantity":0}
+2026-03-28 16:57:06 | WARN | Carrito rechazado por quantity invalida {"userId":2,"productId":1,"quantity":0}
+2026-03-28 16:57:26 | DEBUG | Solicitud para agregar producto al carrito {"userId":2,"productId":1,"quantity":2}
+2026-03-28 16:57:26 | INFO | Producto agregado al carrito {"cartId":3,"userId":2,"productId":1,"quantity":2}
+2026-03-28 16:57:51 | ERROR | Error del sistema en registro {"email":"[email_invalido]","error":"Cannot destructure property 'email' of 'req.body' as it is undefined."}
