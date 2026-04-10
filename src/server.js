@@ -9,6 +9,8 @@ const cartRoutes = require("./routes/cart.routes");
 
 const app = express();
 
+app.disable("x-powered-by");
+
 // Middleware para parsear JSON
 app.use(express.json());
 

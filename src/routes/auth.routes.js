@@ -1,11 +1,22 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const rateLimit = require("express-rate-limit");
 const db = require("../config/database");
 const { generateToken } = require("../utils/generateToken");
 const { verificarToken, verificarRol } = require("../middleware/auth");
 const logger = require("../utils/logger");
 
 const router = express.Router();
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos. Intenta de nuevo más tarde." },
+});
+
+const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
 
 const maskEmail = (email) => {
   if (!email || typeof email !== "string") return "[email_invalido]";
@@ -18,14 +29,14 @@ const maskEmail = (email) => {
 // Endpoint de registro
 router.post("/registro", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body && typeof req.body === "object" ? req.body : {};
 
     logger.debug("Solicitud de registro recibida", {
       email: maskEmail(email),
     });
 
     // Validar que los datos existan
-    if (!email || !password) {
+    if (!isNonEmptyString(email) || !isNonEmptyString(password)) {
       logger.warn("Registro rechazado por credenciales incompletas", {
         email: maskEmail(email),
       });
@@ -91,16 +102,16 @@ router.post("/registro", async (req, res) => {
 });
 
 // Endpoint de login
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body && typeof req.body === "object" ? req.body : {};
 
     logger.debug("Solicitud de login recibida", {
       email: maskEmail(email),
     });
 
     // Validar que los datos existan
-    if (!email || !password) {
+    if (!isNonEmptyString(email) || !isNonEmptyString(password)) {
       logger.warn("Login rechazado por credenciales incompletas", {
         email: maskEmail(email),
       });
@@ -165,7 +176,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/cambiar-password", verificarToken, async (req, res) => {
   try {
-    const { email, nuevaPassword } = req.body;
+    const { email, nuevaPassword } = req.body && typeof req.body === "object" ? req.body : {};
 
     logger.debug("Solicitud de cambio de contrasena recibida", {
       email: maskEmail(email),
@@ -173,7 +184,7 @@ router.post("/cambiar-password", verificarToken, async (req, res) => {
     });
 
     // Validar que el email del token coincida con el de la petición
-    if (email !== req.usuario.email) {
+    if (typeof email !== "string" || email !== req.usuario.email) {
       logger.warn("Cambio de contrasena bloqueado por mismatch de identidad", {
         actorId: req.usuario?.id,
         tokenEmail: maskEmail(req.usuario?.email),
@@ -185,7 +196,7 @@ router.post("/cambiar-password", verificarToken, async (req, res) => {
     }
 
     // Validar que los datos existan
-    if (!email || !nuevaPassword) {
+    if (!isNonEmptyString(email) || !isNonEmptyString(nuevaPassword)) {
       logger.warn("Cambio de contrasena rechazado por datos incompletos", {
         email: maskEmail(email),
       });
